@@ -77,7 +77,7 @@ function SearchArticle() {
                                     </p>
                                     
                                     {/* Read More Link */}
-                                    <a href={item.url} className="mb-4 inline-block font-medium text-blue-600 hover:text-blue-800">
+                                    <a href={item.url} target="_blank" rel="noopener noreferrer" className="mb-4 inline-block font-medium text-blue-600 hover:text-blue-800">
                                         อ่านต่อ
                                     </a>
                                     
