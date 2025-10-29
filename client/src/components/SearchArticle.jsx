@@ -5,10 +5,13 @@ import { Link } from 'lucide-react';
 function SearchArticle() {
     const [searchValue,setSearchValue] = useState("");
     const [articles,setArticles] = useState([]);
+    const [isLoading,setIsLoading] = useState(true);
 
     const getArticleData = async(search) => {
+        setIsLoading(true);
         const articleData = await axios.get("https://tourist-attraction-api-hij9.onrender.com/trips?keywords="+search);
         setArticles(articleData.data.data);
+        setIsLoading(false);
     }
 
     useEffect(()=>{getArticleData(searchValue)},[searchValue]);
@@ -52,72 +55,117 @@ function SearchArticle() {
             {/* Article Cards Section */}
             <section className="mx-auto max-w-6xl px-4 pb-12">
                 <div className="space-y-8">
-                    {articles.map((item,index)=>(
-                        <article key={item.eid} className="overflow-hidden rounded-xl bg-white shadow-lg">
-                            <div className="relative flex flex-col lg:flex-row">
-                                {/* Left Section - Feature Image */}
-                                <div className="lg:w-1/3">
-                                    <img 
-                                        src={item.photos[0]}
-                                        alt={item.title}
-                                        className="h-64 w-full object-cover lg:h-full"
-                                    />
+                    {isLoading ? (
+                        // Skeleton Loading
+                        [...Array(3)].map((_, index) => (
+                            <article key={index} className="overflow-hidden rounded-xl bg-white shadow-lg">
+                                <div className="relative flex flex-col lg:flex-row animate-pulse">
+                                    {/* Left Section - Feature Image Skeleton */}
+                                    <div className="lg:w-1/3">
+                                        <div className="h-64 w-full bg-gray-300 lg:h-full"></div>
+                                    </div>
+                                    
+                                    {/* Right Section - Content Skeleton */}
+                                    <div className="lg:w-2/3 p-6">
+                                        {/* Title Skeleton */}
+                                        <div className="mb-3 h-6 w-3/4 bg-gray-300 rounded"></div>
+                                        
+                                        {/* Description Skeleton */}
+                                        <div className="mb-4 space-y-2">
+                                            <div className="h-4 w-full bg-gray-200 rounded"></div>
+                                            <div className="h-4 w-full bg-gray-200 rounded"></div>
+                                            <div className="h-4 w-2/3 bg-gray-200 rounded"></div>
+                                        </div>
+                                        
+                                        {/* Read More Link Skeleton */}
+                                        <div className="mb-4 h-4 w-20 bg-gray-300 rounded"></div>
+                                        
+                                        {/* Category Tags Skeleton */}
+                                        <div className="mb-4 flex gap-2">
+                                            <div className="h-4 w-12 bg-gray-200 rounded"></div>
+                                            <div className="h-4 w-16 bg-gray-200 rounded"></div>
+                                            <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                                        </div>
+                                        
+                                        {/* Thumbnail Gallery Skeleton */}
+                                        <div className="flex gap-2">
+                                            {[...Array(3)].map((_, idx) => (
+                                                <div key={idx} className="h-16 w-16 rounded-lg bg-gray-300"></div>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
-                                
-                                {/* Right Section - Content */}
-                                <div className="lg:w-2/3 p-6">
-                                    {/* Title */}
-                                    <a href={item.url} className="mb-3 text-xl font-bold leading-tight text-gray-800">
-                                        {item.title}
-                                    </a>
+                            </article>
+                        ))
+                    ) : (
+                        // Actual Articles
+                        articles.map((item,index)=>(
+                            <article key={item.eid} className="overflow-hidden rounded-xl bg-white shadow-lg">
+                                <div className="relative flex flex-col lg:flex-row">
+                                    {/* Left Section - Feature Image */}
+                                    <div className="lg:w-1/3">
+                                        <img 
+                                            src={item.photos[0]}
+                                            alt={item.title}
+                                            className="h-64 w-full object-cover lg:h-full"
+                                        />
+                                    </div>
                                     
-                                    {/* Description */}
-                                    <p className="mb-4 text-gray-600 line-clamp-3">
-                                        {item.description.substring(0, 100)}...
-                                    </p>
-                                    
-                                    {/* Read More Link */}
-                                    <a href={item.url} target="_blank" rel="noopener noreferrer" className="mb-4 inline-block font-medium text-blue-600 hover:text-blue-800">
-                                        อ่านต่อ
-                                    </a>
-                                    
-                                    {/* Category Tags */}
-                                    <div className="mb-4">
-                                        <span className="mr-2 text-sm text-gray-500">หมวด</span>
-                                        {item.tags.map((tag,index)=>(
-                                            <button
-                                                key={index} 
-                                                className="mb-1 mr-1 inline-block px-1 py-0.5 text-sm text-gray-500 underline cursor-pointer"
-                                                onClick={()=>handlingTag(tag)}
+                                    {/* Right Section - Content */}
+                                    <div className="lg:w-2/3 p-6">
+                                        {/* Title */}
+                                        <a href={item.url} className="mb-3 text-xl font-bold leading-tight text-gray-800">
+                                            {item.title}
+                                        </a>
+                                        
+                                        {/* Description */}
+                                        <p className="mb-4 text-gray-600 line-clamp-3">
+                                            {item.description.substring(0, 100)}...
+                                        </p>
+                                        
+                                        {/* Read More Link */}
+                                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="mb-4 inline-block font-medium text-blue-600 hover:text-blue-800">
+                                            อ่านต่อ
+                                        </a>
+                                        
+                                        {/* Category Tags */}
+                                        <div className="mb-4">
+                                            <span className="mr-2 text-sm text-gray-500">หมวด</span>
+                                            {item.tags.map((tag,index)=>(
+                                                <button
+                                                    key={index} 
+                                                    className="mb-1 mr-1 inline-block px-1 py-0.5 text-sm text-gray-500 underline cursor-pointer"
+                                                    onClick={()=>handlingTag(tag)}
+                                                >
+                                                    {tag}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        
+                                        {/* Thumbnail Gallery */}
+                                        <div className="flex gap-2">
+                                            {item.photos.slice(1, 4).map((photo,index)=>(
+                                                <img 
+                                                    key={index}
+                                                    src={photo}
+                                                    alt={`${item.title} - ${index + 1}`}
+                                                    className="h-16 w-16 rounded-lg object-cover"
+                                                />
+                                            ))}
+                                        </div>
+                                        
+                                        {/* Link Icon */}
+                                        <button 
+                                            onClick={() =>  navigator.clipboard.writeText(item.url)}
+                                            className="absolute bottom-4 right-4"
                                             >
-                                                {tag}
-                                            </button>
-                                        ))}
+                                            <Link className="cursor-pointer text-blue-600 hover:text-blue-800"/>
+                                        </button>
                                     </div>
-                                    
-                                    {/* Thumbnail Gallery */}
-                                    <div className="flex gap-2">
-                                        {item.photos.slice(1, 4).map((photo,index)=>(
-                                            <img 
-                                                key={index}
-                                                src={photo}
-                                                alt={`${item.title} - ${index + 1}`}
-                                                className="h-16 w-16 rounded-lg object-cover"
-                                            />
-                                        ))}
-                                    </div>
-                                    
-                                    {/* Link Icon */}
-                                    <button 
-                                        onClick={() =>  navigator.clipboard.writeText(item.url)}
-                                        className="absolute bottom-4 right-4"
-                                        >
-                                        <Link className="cursor-pointer text-blue-600 hover:text-blue-800"/>
-                                    </button>
                                 </div>
-                            </div>
-                        </article>
-                    ))}
+                            </article>
+                        ))
+                    )}
                 </div>
             </section>
         </div>
