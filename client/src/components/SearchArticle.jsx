@@ -7,7 +7,7 @@ function SearchArticle() {
     const [articles,setArticles] = useState([]);
 
     const getArticleData = async(search) => {
-        const articleData = await axios.get("http://localhost:4001/trips?keywords="+search);
+        const articleData = await axios.get("https://tourist-attraction-api-hij9.onrender.com/trips?keywords="+search);
         setArticles(articleData.data.data);
     }
 
